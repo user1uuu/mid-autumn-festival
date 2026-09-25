@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="中秋快乐，月圆人团圆。">
+<title>中秋快乐 · 月圆人团圆</title>
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500&display=swap">
+<style>
+/* ============ 基础 ============ */
+:root{
+  --night-1:#070d24;
+  --night-2:#0d1a3f;
+  --night-3:#16264f;
+  --gold:#f6c96b;
+  --gold-deep:#e8a94e;
+  --gold-soft:rgba(246,201,107,.16);
+  --paper:#f7f2e6;
+  --lantern:#c84b31;
+  --lantern-deep:#a03924;
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--night-1);
+  color:var(--paper);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+}
+img{display:block;max-width:100%}
+button{font-family:inherit;border:none;cursor:pointer}
+
+/* ============ Hero ============ */
+.hero{
+  position:relative;
+  min-height:100vh;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+}
+.bg-img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity 1.4s ease;
+}
+.bg-img.loaded{opacity:1}
+.bg-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    rgba(7,13,36,.16) 0%,
+    rgba(7,13,36,.26) 42%,
+    rgba(7,13,36,.58) 76%,
+    rgba(7,13,36,.9) 100%);
+}
+#starCanvas{position:absolute;inset:0;pointer-events:none;z-index:2}
+
+/* 月光呼吸 */
+.moon-glow{
+  position:absolute;left:50%;top:23%;
+  width:min(56vmin,360px);height:min(56vmin,360px);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(246,201,107,.5) 0%,
+    rgba(246,201,107,.16) 46%,
+    rgba(246,201,107,0) 72%);
+  border-radius:50%;
+  mix-blend-mode:screen;
+  animation:moonBreath 5.5s ease-in-out infinite;
+  cursor:pointer;
+  z-index:3;
+}
+@keyframes moonBreath{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}
+  50%{transform:translate(-50%,-50%) scale(1.09);opacity:1}
+}
+
+/* 灯笼 */
+.lantern{
+  position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);
+  width:52px;height:auto;z-index:3;
+  transform-origin:top center;
+  animation:swing 7s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(200,75,49,.35));
+}
+.lantern.left{left:calc(env(safe-area-inset-left,0px) + 14px)}
+.lantern.right{right:calc(env(safe-area-inset-right,0px) + 14px);animation-delay:-3.5s}
+@keyframes swing{
+  0%,100%{transform:rotate(-2.6deg)}
+  50%{transform:rotate(2.8deg)}
+}
+
+/* 标题区 */
+.hero-content{
+  position:relative;z-index:4;
+  padding:14vh 24px calc(env(safe-area-inset-bottom,0px) + 72px);
+  max-width:480px;
+}
+.kicker{
+  font-size:13px;letter-spacing:.42em;color:var(--gold);
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  margin-bottom:22px;opacity:0;animation:fadeDown .8s .2s ease forwards;
+}
+.kicker::before,.kicker::after{
+  content:"";display:block;height:1px;width:34px;
+  background:linear-gradient(90deg,transparent,var(--gold));
+}
+.kicker::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.hero-title{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(3.1rem,15vw,5.2rem);
+  letter-spacing:.14em;
+  line-height:1.15;
+  color:var(--paper);
+  text-shadow:0 4px 30px rgba(246,201,107,.35);
+  margin-bottom:18px;
+}
+.hero-title .ch{
+  display:inline-block;
+  opacity:0;transform:translateY(26px);
+  animation:riseIn .95s cubic-bezier(.2,.7,.25,1) forwards;
+  animation-delay:var(--d,0s);
+}
+.hero-sub{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(1.35rem,6.2vw,1.9rem);
+  letter-spacing:.32em;text-indent:.32em;
+  color:var(--gold);
+  margin-bottom:16px;
+}
+.hero-sub .ch{
+  display:inline-block;opacity:0;transform:translateY(20px);
+  animation:riseIn .9s cubic-bezier(.2,.7,.25,1) forwards;
+  animation-delay:var(--d,0s);
+}
+.hero-poem{
+  font-family:var(--serif);font-weight:500;
+  font-size:clamp(1rem,4.4vw,1.25rem);
+  letter-spacing:.18em;text-indent:.18em;
+  color:rgba(247,242,230,.82);
+  opacity:0;animation:fadeDown 1s .9s ease forwards;
+}
+@keyframes riseIn{
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeDown{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.scroll-hint{
+  position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
+  transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:12px;letter-spacing:.3em;text-indent:.3em;
+  color:rgba(247,242,230,.68);z-index:4;
+  opacity:0;animation:fadeDown 1s 1.5s ease forwards;
+}
+.scroll-hint svg{animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{
+  0%,100%{transform:translateY(0);opacity:.7}
+  50%{transform:translateY(7px);opacity:1}
+}
+
+/* ============ 祝福区 ============ */
+.bless{
+  position:relative;z-index:4;
+  background:linear-gradient(180deg,var(--night-1) 0%,var(--night-2) 100%);
+  padding:84px 22px 96px;
+  text-align:center;
+}
+.bless .section-kicker{
+  font-size:12px;letter-spacing:.4em;text-indent:.4em;color:var(--gold);
+  margin-bottom:14px;opacity:.85;
+}
+.bless h2{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(1.5rem,6.8vw,2.1rem);
+  letter-spacing:.08em;
+  margin-bottom:44px;
+}
+.cards{
+  display:grid;gap:20px;
+  max-width:680px;margin:0 auto;
+}
+.card{
+  background:rgba(22,38,79,.42);
+  border:1px solid rgba(246,201,107,.22);
+  border-radius:22px;
+  padding:30px 26px;
+  text-align:center;
+  opacity:0;transform:translateY(30px);
+  transition:opacity .8s ease,transform .8s ease,border-color .3s ease,background .3s ease;
+}
+.card.in{opacity:1;transform:translateY(0)}
+.card:hover{
+  border-color:rgba(246,201,107,.5);
+  background:rgba(22,38,79,.6);
+}
+.card svg{
+  width:44px;height:44px;margin:0 auto 16px;display:block;
+  color:var(--gold);
+}
+.card h3{
+  font-family:var(--serif);font-weight:700;
+  font-size:1.3rem;letter-spacing:.24em;text-indent:.24em;
+  color:var(--gold);margin-bottom:12px;
+}
+.card p{
+  font-size:15px;line-height:1.9;
+  color:rgba(247,242,230,.86);
+}
+
+/* ============ 许愿互动区 ============ */
+.wish{
+  position:relative;z-index:4;
+  background:linear-gradient(180deg,var(--night-2) 0%,var(--night-3) 100%);
+  padding:84px 22px calc(env(safe-area-inset-bottom,0px) + 72px);
+  text-align:center;
+}
+.wish h2{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(1.5rem,6.8vw,2.1rem);
+  letter-spacing:.08em;margin-bottom:12px;
+}
+.wish .tip{
+  font-size:14px;color:rgba(247,242,230,.66);
+  margin-bottom:34px;
+}
+.wish-fire{
+  display:inline-block;
+  font-size:17px;letter-spacing:.14em;text-indent:.14em;
+  color:var(--night-1);
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-deep) 100%);
+  border-radius:999px;
+  padding:16px 44px;
+  box-shadow:0 8px 30px rgba(246,201,107,.35);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+  min-height:52px;
+}
+.wish-fire:active{transform:scale(.96)}
+.wish-fire:hover{filter:brightness(1.06);box-shadow:0 10px 38px rgba(246,201,107,.5)}
+.wish-text{
+  min-height:2.2em;
+  margin-top:30px;
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(1.05rem,4.8vw,1.3rem);
+  letter-spacing:.1em;
+  color:var(--gold);
+  opacity:0;transform:translateY(10px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+.wish-text.show{opacity:1;transform:translateY(0)}
+
+footer{
+  background:var(--night-3);
+  padding:26px 20px calc(env(safe-area-inset-bottom,0px) + 30px);
+  text-align:center;
+  font-size:13px;letter-spacing:.3em;text-indent:.3em;
+  color:rgba(247,242,230,.55);
+  position:relative;z-index:4;
+}
+
+/* 桂花飘落层 */
+#petalCanvas{
+  position:fixed;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:8;
+}
+
+/* 减少动态偏好 */
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+  .hero-title .ch,.hero-sub .ch,.kicker,.hero-poem,.scroll-hint{opacity:1;transform:none}
+  .card{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Hero：中秋月夜 ===== -->
+<section class="hero" id="hero">
+  <img id="bgArt" class="bg-img" src="https://aka.doubaocdn.com/s/0HyqbWUcXx" alt="中秋月夜：满月高悬，桂花树下玉兔望月">
+  <div class="bg-overlay"></div>
+  <canvas id="starCanvas"></canvas>
+
+  <div class="moon-glow" id="moonGlow" role="button" aria-label="点击月亮放烟花"></div>
+
+  <!-- 灯笼 -->
+  <div class="lantern left" aria-hidden="true">
+    <svg viewBox="0 0 60 130" width="52" height="113" fill="none">
+      <defs>
+        <radialGradient id="lgL" cx="50%" cy="40%" r="65%">
+          <stop offset="0%" stop-color="#ffdca6"/>
+          <stop offset="55%" stop-color="#f0a55e"/>
+          <stop offset="100%" stop-color="#c84b31"/>
+        </radialGradient>
+      </defs>
+      <line x1="30" y1="0" x2="30" y2="16" stroke="#d9a05b" stroke-width="2"/>
+      <rect x="18" y="16" width="24" height="7" rx="2.5" fill="#e8a94e"/>
+      <ellipse cx="30" cy="52" rx="19" ry="27" fill="url(#lgL)"/>
+      <path d="M14 40h32M13 52h34M14 64h32" stroke="#a03924" stroke-width="1.6" opacity=".55"/>
+      <rect x="18" y="79" width="24" height="7" rx="2.5" fill="#e8a94e"/>
+      <line x1="30" y1="86" x2="30" y2="100" stroke="#d9a05b" stroke-width="2"/>
+      <path d="M30 100c-7 4-7 10 0 14 7-4 7-10 0-14z" fill="#c84b31"/>
+      <path d="M30 114c-5 3-5 8 0 11 5-3 5-8 0-11z" fill="#e8a94e"/>
+      <path d="M30 125c-3 2-3 5 0 7 3-2 3-5 0-7z" fill="#f6c96b"/>
+    </svg>
+  </div>
+  <div class="lantern right" aria-hidden="true">
+    <svg viewBox="0 0 60 130" width="52" height="113" fill="none">
+      <defs>
+        <radialGradient id="lgR" cx="50%" cy="40%" r="65%">
+          <stop offset="0%" stop-color="#ffdca6"/>
+          <stop offset="55%" stop-color="#f0a55e"/>
+          <stop offset="100%" stop-color="#c84b31"/>
+        </radialGradient>
+      </defs>
+      <line x1="30" y1="0" x2="30" y2="16" stroke="#d9a05b" stroke-width="2"/>
+      <rect x="18" y="16" width="24" height="7" rx="2.5" fill="#e8a94e"/>
+      <ellipse cx="30" cy="52" rx="19" ry="27" fill="url(#lgR)"/>
+      <path d="M14 40h32M13 52h34M14 64h32" stroke="#a03924" stroke-width="1.6" opacity=".55"/>
+      <rect x="18" y="79" width="24" height="7" rx="2.5" fill="#e8a94e"/>
+      <line x1="30" y1="86" x2="30" y2="100" stroke="#d9a05b" stroke-width="2"/>
+      <path d="M30 100c-7 4-7 10 0 14 7-4 7-10 0-14z" fill="#c84b31"/>
+      <path d="M30 114c-5 3-5 8 0 11 5-3 5-8 0-11z" fill="#e8a94e"/>
+      <path d="M30 125c-3 2-3 5 0 7 3-2 3-5 0-7z" fill="#f6c96b"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="kicker">农历八月十五 · 中秋佳节</p>
+    <h1 class="hero-title" data-split>中秋快乐</h1>
+    <p class="hero-sub" data-split>月圆人团圆</p>
+    <p class="hero-poem">但愿人长久，千里共婵娟</p>
+  </div>
+
+  <div class="scroll-hint">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    <span>下滑接收祝福</span>
+  </div>
+</section>
+
+<!-- ===== 祝福区 ===== -->
+<section class="bless">
+  <p class="section-kicker">中秋 · 三愿</p>
+  <h2>把最圆的月，送给最亲的人</h2>
+  <div class="cards">
+    <article class="card">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="24" cy="24" r="13"/>
+        <path d="M31 11a10 10 0 0 0-9 9" opacity=".55"/>
+        <path d="M24 11v2M24 35v2M11 24h2M35 24h2" stroke-width="1.6"/>
+      </svg>
+      <h3>圆月</h3>
+      <p>天上月圆，人间团圆。<br>愿你所念之人，皆在身边。</p>
+    </article>
+    <article class="card">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M24 42c-4-6-4-11 0-14 4 3 4 8 0 14z" fill="currentColor" fill-opacity=".18"/>
+        <circle cx="15" cy="22" r="3" fill="currentColor" fill-opacity=".7"/>
+        <circle cx="22" cy="17" r="3" fill="currentColor" fill-opacity=".7"/>
+        <circle cx="30" cy="20" r="3" fill="currentColor" fill-opacity=".7"/>
+        <circle cx="19" cy="28" r="2.6" fill="currentColor" fill-opacity=".55"/>
+        <circle cx="27" cy="27" r="2.6" fill="currentColor" fill-opacity=".55"/>
+      </svg>
+      <h3>桂花</h3>
+      <p>桂子飘香，好运绵长。<br>愿你生活甜如月饼，香如桂花。</p>
+    </article>
+    <article class="card">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="24" cy="27" rx="13" ry="11"/>
+        <ellipse cx="24" cy="22" rx="7.5" ry="8"/>
+        <path d="M15 26c-2 2-3 5-3 9 5-1 8-4 9-9" fill="currentColor" fill-opacity=".15"/>
+        <path d="M33 26c2 2 3 5 3 9-5-1-8-4-9-9" fill="currentColor" fill-opacity=".15"/>
+        <circle cx="22.5" cy="22" r="1.6" fill="currentColor"/>
+        <circle cx="27" cy="24" r="1.6" fill="currentColor"/>
+        <path d="M24 19c-1.6 2.2-.4 4.4 0 5 1.6-2.2.4-4.4 0-5z" fill="currentColor" fill-opacity=".5"/>
+      </svg>
+      <h3>玉兔</h3>
+      <p>玉兔相伴，喜乐常安。<br>愿你心存温柔，奔赴所爱。</p>
+    </article>
+  </div>
+</section>
+
+<!-- ===== 许愿互动区 ===== -->
+<section class="wish">
+  <h2>点亮一盏祝福</h2>
+  <p class="tip">点一下，为你放一束中秋烟花</p>
+  <button type="button" class="wish-fire" id="fireBtn">点亮烟花</button>
+  <p class="wish-text" id="wishText" aria-live="polite"></p>
+</section>
+
+<footer>花好月圆 · 中秋快乐</footer>
+
+<canvas id="petalCanvas"></canvas>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 图片淡入 ---------- */
+  var bgArt = document.getElementById("bgArt");
+  if (bgArt.complete) {
+    bgArt.classList.add("loaded");
+  } else {
+    bgArt.addEventListener("load", function(){ bgArt.classList.add("loaded"); });
+    bgArt.addEventListener("error", function(){ bgArt.classList.add("loaded"); });
+  }
+
+  /* ---------- 标题逐字浮现 ---------- */
+  var splitEls = document.querySelectorAll("[data-split]");
+  splitEls.forEach(function(el){
+    var text = el.textContent.trim();
+    el.textContent = "";
+    Array.prototype.forEach.call(text, function(ch, i){
+      var span = document.createElement("span");
+      span.className = "ch";
+      span.textContent = ch;
+      span.style.setProperty("--d", (0.25 + i * 0.16) + "s");
+      el.appendChild(span);
+    });
+  });
+
+  /* ---------- 星星 ---------- */
+  var hero = document.getElementById("hero");
+  var starCanvas = document.getElementById("starCanvas");
+  var sctx = starCanvas.getContext("2d");
+  var stars = [];
+  var heroW = 0, heroH = 0;
+
+  function resizeStars(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    heroW = hero.offsetWidth;
+    heroH = hero.offsetHeight;
+    starCanvas.width = heroW * dpr;
+    starCanvas.height = heroH * dpr;
+    sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var count = Math.min(90, Math.round(heroW / 8));
+    stars = [];
+    for (var i = 0; i < count; i++){
+      stars.push({
+        x: Math.random() * heroW,
+        y: Math.random() * heroH * 0.85,
+        r: 0.5 + Math.random() * 1.5,
+        base: 0.25 + Math.random() * 0.55,
+        speed: 0.4 + Math.random() * 1.1,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+  function drawStars(t){
+    sctx.clearRect(0, 0, heroW, heroH);
+    for (var i = 0; i < stars.length; i++){
+      var s = stars[i];
+      var a = s.base * (0.55 + 0.45 * Math.sin(t * 0.001 * s.speed + s.phase));
+      sctx.beginPath();
+      sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      sctx.fillStyle = "rgba(255,244,214," + a + ")";
+      sctx.fill();
+    }
+  }
+
+  /* ---------- 桂花飘落 ---------- */
+  var petalCanvas = document.getElementById("petalCanvas");
+  var pctx = petalCanvas.getContext("2d");
+  var petals = [];
+  var pw = 0, ph = 0;
+
+  function resizePetals(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    pw = window.innerWidth;
+    ph = window.innerHeight;
+    petalCanvas.width = pw * dpr;
+    petalCanvas.height = ph * dpr;
+    pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var count = reduceMotion ? 0 : Math.min(26, Math.round(pw / 16));
+    petals = [];
+    var colors = ["246,201,107", "240,179,90", "255,217,166"];
+    for (var i = 0; i < count; i++){
+      petals.push({
+        x: Math.random() * pw,
+        y: -30 - Math.random() * ph,
+        size: 5 + Math.random() * 6,
+        speedY: 0.35 + Math.random() * 0.55,
+        amp: 0.5 + Math.random() * 1.2,
+        freq: 0.4 + Math.random() * 0.7,
+        phase: Math.random() * Math.PI * 2,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 0.35 + Math.random() * 0.45
+      });
+    }
+  }
+  function drawPetal(cx, cy, size, rot){
+    pctx.save();
+    pctx.translate(cx, cy);
+    pctx.rotate(rot);
+    // 四瓣小花
+    pctx.beginPath();
+    for (var i = 0; i < 4; i++){
+      pctx.rotate(Math.PI / 2);
+      pctx.ellipse(size * 0.62, 0, size * 0.55, size * 0.3, 0, 0, Math.PI * 2);
+    }
+    pctx.fill();
+    pctx.restore();
+  }
+  function drawPetals(){
+    pctx.clearRect(0, 0, pw, ph);
+    for (var i = 0; i < petals.length; i++){
+      var p = petals[i];
+      p.y += p.speedY;
+      p.x += Math.sin(p.y * 0.01 * p.freq + p.phase) * p.amp;
+      p.rot += p.rotSpeed;
+      if (p.y > ph + 40){
+        p.y = -30;
+        p.x = Math.random() * pw;
+      }
+      pctx.fillStyle = "rgba(" + p.color + "," + p.alpha + ")";
+      drawPetal(p.x, p.y, p.size, p.rot);
+    }
+  }
+
+  /* ---------- 烟花 ---------- */
+  var fireworks = [];
+  var FIRE_COLORS = ["246,201,107", "255,217,166", "240,179,90", "255,138,101", "255,240,214"];
+
+  function launchFirework(x, y){
+    var n = 56;
+    var baseAngle = Math.random() * Math.PI * 2;
+    var spread = 1.9 + Math.random() * 0.5;
+    var color = FIRE_COLORS[Math.floor(Math.random() * FIRE_COLORS.length)];
+    for (var i = 0; i < n; i++){
+      var angle = baseAngle + (i / n) * Math.PI * 2 * (Math.random() < 0.5 ? 1 : -1);
+      var speed = (2 + Math.random() * 3.6) * spread;
+      fireworks.push({
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 0.008 + Math.random() * 0.01,
+        r: 1.4 + Math.random() * 1.8,
+        color: color,
+        alpha: 1
+      });
+    }
+  }
+  function burstAt(screenX, screenY){
+    // 在屏幕中央偏上连放三束，若提供了点击坐标则以点击坐标为主
+    var cx = screenX || pw / 2;
+    var cy = screenY || ph * 0.34;
+    launchFirework(cx, cy);
+    setTimeout(function(){ launchFirework(cx - 70 + Math.random() * 140, cy - 40 + Math.random() * 80); }, 130);
+    setTimeout(function(){ launchFirework(cx - 70 + Math.random() * 140, cy - 40 + Math.random() * 80); }, 280);
+  }
+  function drawFireworks(){
+    for (var i = fireworks.length - 1; i >= 0; i--){
+      var f = fireworks[i];
+      f.x += f.vx;
+      f.y += f.vy;
+      f.vy += 0.06;
+      f.vx *= 0.985;
+      f.life -= f.decay;
+      if (f.life <= 0){ fireworks.splice(i, 1); continue; }
+      pctx.beginPath();
+      pctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      pctx.fillStyle = "rgba(" + f.color + "," + (f.life * f.alpha) + ")";
+      pctx.fill();
+    }
+  }
+
+  /* ---------- 主循环 ---------- */
+  var started = false;
+  function tick(t){
+    drawStars(t);
+    drawPetals();
+    drawFireworks();
+    if (!reduceMotion){
+      requestAnimationFrame(tick);
+    }
+  }
+
+  /* ---------- 祝福语 ---------- */
+  var wishes = [
+    "愿月圆人圆，事事圆满",
+    "但愿人长久，千里共婵娟",
+    "月满中秋，情满人间",
+    "愿你岁岁平安，年年圆满",
+    "花好月圆，阖家欢乐",
+    "中秋佳节，幸福安康"
+  ];
+  var wishIdx = 0;
+  var wishText = document.getElementById("wishText");
+  function showWish(){
+    wishText.textContent = wishes[wishIdx % wishes.length];
+    wishIdx++;
+    wishText.classList.remove("show");
+    void wishText.offsetWidth;
+    wishText.classList.add("show");
+  }
+
+  /* ---------- 事件绑定 ---------- */
+  var fireBtn = document.getElementById("fireBtn");
+  var moonGlow = document.getElementById("moonGlow");
+
+  function fireFromButton(){
+    var rect = fireBtn.getBoundingClientRect();
+    burstAt(rect.left + rect.width / 2, rect.top - 40);
+    showWish();
+  }
+  fireBtn.addEventListener("click", fireFromButton);
+  moonGlow.addEventListener("click", function(e){
+    var rect = moonGlow.getBoundingClientRect();
+    burstAt(rect.left + rect.width / 2, rect.top + rect.height * 0.7);
+    showWish();
+  });
+
+  /* ---------- 滚动渐入 ---------- */
+  var cards = document.querySelectorAll(".card");
+  if ("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.18 });
+    cards.forEach(function(c){ io.observe(c); });
+  } else {
+    cards.forEach(function(c){ c.classList.add("in"); });
+  }
+
+  /* ---------- 初始化 ---------- */
+  resizeStars();
+  resizePetals();
+  var resizeTimer = null;
+  window.addEventListener("resize", function(){
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      resizeStars();
+      resizePetals();
+    }, 200);
+  });
+  if (!started){
+    started = true;
+    requestAnimationFrame(tick);
+    // 首屏欢迎烟花
+    if (!reduceMotion){
+      setTimeout(function(){
+        burstAt(pw / 2, ph * 0.32);
+      }, 1600);
+    }
+  }
+})();
+</script>
+</body>
+</html>
