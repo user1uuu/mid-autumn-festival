@@ -277,6 +277,46 @@ footer{
   pointer-events:none;z-index:8;
 }
 
+/* 背景音乐按钮 */
+.music-btn{
+  position:fixed;
+  right:calc(env(safe-area-inset-right,0px) + 18px);
+  bottom:calc(env(safe-area-inset-bottom,0px) + 88px);
+  width:50px;height:50px;border-radius:50%;
+  background:rgba(13,26,63,.74);
+  border:1px solid rgba(246,201,107,.45);
+  color:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  z-index:20;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.music-btn svg{width:23px;height:23px}
+.music-btn:active{transform:scale(.92)}
+.music-btn.playing{
+  border-color:rgba(246,201,107,.95);
+  box-shadow:0 0 20px rgba(246,201,107,.5);
+}
+.music-btn.playing svg{animation:musicSpin 4s linear infinite}
+@keyframes musicSpin{to{transform:rotate(360deg)}}
+.music-hint{
+  position:fixed;
+  right:calc(env(safe-area-inset-right,0px) + 80px);
+  bottom:calc(env(safe-area-inset-bottom,0px) + 100px);
+  font-size:12px;letter-spacing:.06em;color:var(--gold);
+  background:rgba(13,26,63,.7);
+  border:1px solid rgba(246,201,107,.3);
+  border-radius:999px;
+  padding:6px 12px;
+  z-index:20;
+  white-space:nowrap;
+  opacity:0;
+  transform:translateX(8px);
+  transition:opacity .5s ease,transform .5s ease;
+  pointer-events:none;
+}
+.music-hint.show{opacity:1;transform:translateX(0)}
+
 /* 减少动态偏好 */
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important}
@@ -401,6 +441,16 @@ footer{
 </section>
 
 <footer>花好月圆 · 中秋快乐</footer>
+
+<audio id="bgm" src="bgm.flac" loop preload="auto"></audio>
+<button type="button" class="music-btn" id="musicBtn" aria-label="播放背景音乐">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18V5l12-2v13"/>
+    <circle cx="6" cy="18" r="3"/>
+    <circle cx="18" cy="16" r="3"/>
+  </svg>
+</button>
+<span class="music-hint" id="musicHint">轻触开启音乐</span>
 
 <canvas id="petalCanvas"></canvas>
 
@@ -628,6 +678,53 @@ footer{
     burstAt(rect.left + rect.width / 2, rect.top + rect.height * 0.7);
     showWish();
   });
+
+  /* ---------- 背景音乐 ---------- */
+  var bgm = document.getElementById("bgm");
+  var musicBtn = document.getElementById("musicBtn");
+  var musicHint = document.getElementById("musicHint");
+  var musicOn = false;
+  var hintShown = false;
+
+  function showHint(){
+    if (!hintShown){
+      hintShown = true;
+      musicHint.classList.add("show");
+      setTimeout(function(){ musicHint.classList.remove("show"); }, 2600);
+    }
+  }
+  function tryPlayMusic(){
+    if (musicOn) return;
+    var p = bgm.play();
+    if (p && p.then){
+      p.then(function(){
+        musicOn = true;
+        musicBtn.classList.add("playing");
+      }).catch(function(){
+        showHint();
+      });
+    } else {
+      musicOn = true;
+      musicBtn.classList.add("playing");
+    }
+  }
+  musicBtn.addEventListener("click", function(){
+    if (musicOn){
+      bgm.pause();
+      musicOn = false;
+      musicBtn.classList.remove("playing");
+    } else {
+      tryPlayMusic();
+    }
+  });
+  // 微信等浏览器限制自动播放，首次触摸页面时尝试开启
+  window.addEventListener("load", function(){
+    setTimeout(tryPlayMusic, 700);
+  });
+  document.addEventListener("touchstart", function once(){
+    tryPlayMusic();
+    document.removeEventListener("touchstart", once);
+  }, { once: true });
 
   /* ---------- 滚动渐入 ---------- */
   var cards = document.querySelectorAll(".card");
